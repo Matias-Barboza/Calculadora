@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Calculadora extends JFrame implements ActionListener{
+public class Calculadora extends JFrame{
 
     private Toolkit toolkit;
     private Dimension dimensionPantalla;
@@ -24,6 +24,7 @@ public class Calculadora extends JFrame implements ActionListener{
     private JButton sieteButton = new JButton("7");
     private JButton ochoButton = new JButton("8");
     private JButton nueveButton = new JButton("9");
+    private JButton ansButton = new JButton("Ans");
     private JButton borrarUnoButton = new JButton("CE");
     private JButton borrarTodoButton = new JButton("C");
     private JButton divisionButton = new JButton("÷");
@@ -36,7 +37,7 @@ public class Calculadora extends JFrame implements ActionListener{
     Campo de texto donde se reproduce el tecleo de la operacion y posteriormente su resultado
     --------------------------------------------------------------------------------------------------------------------
      */
-    private JTextField pantalla = new JTextField();
+    private JLabel pantalla = new JLabel();
 
     public Calculadora(){
         super("Calculadora simple con Java");
@@ -56,7 +57,9 @@ public class Calculadora extends JFrame implements ActionListener{
         ----------------------------------------------------------------------------------------------------------------
          */
         pantalla.setBounds(10,10,390,70);
+        pantalla.setFont(new Font("Calibri",Font.PLAIN,40));
 
+        ansButton.setBounds(120,90,100,40);
         borrarUnoButton.setBounds(230,90,100,40);
         borrarTodoButton.setBounds(340,90,60,40);
 
@@ -96,6 +99,7 @@ public class Calculadora extends JFrame implements ActionListener{
         this.add(sieteButton);
         this.add(ochoButton);
         this.add(nueveButton);
+        this.add(ansButton);
         this.add(borrarUnoButton);
         this.add(borrarTodoButton);
         this.add(divisionButton);
@@ -105,12 +109,148 @@ public class Calculadora extends JFrame implements ActionListener{
         this.add(igualButton);
         this.add(puntoButton);
         this.add(pantalla);
+
+        inicializarAccionesDeBotones();
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e){
-        if(e.getSource() == borrarUnoButton){
-            pantalla.setText("");
-        }
+    private void inicializarAccionesDeBotones(){
+
+        ansButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+        borrarUnoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!pantalla.getText().isEmpty()) {
+                    String operacion = pantalla.getText();
+                    operacion = operacion.substring(0, operacion.length() - 1);
+                    pantalla.setText(operacion);
+                }
+            }
+        });
+
+        borrarTodoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText("");
+            }
+        });
+
+        sieteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "7");
+            }
+        });
+
+        ochoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "8");
+            }
+        });
+
+        nueveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "9");
+            }
+        });
+
+        divisionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "÷");
+            }
+        });
+
+        cuatroButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "4");
+            }
+        });
+
+        cincoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "5");
+            }
+        });
+
+        seisButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "6");
+            }
+        });
+
+        multiplicacionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "x");
+            }
+        });
+
+        unoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "1");
+            }
+        });
+
+        dosButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "2");
+            }
+        });
+
+        tresButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "3");
+            }
+        });
+
+        restaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "-");
+            }
+        });
+
+        ceroButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "0");
+            }
+        });
+
+        puntoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + ".");
+            }
+        });
+
+        igualButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "=");
+            }
+        });
+
+        sumaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pantalla.setText(pantalla.getText() + "+");
+            }
+        });
+
     }
 }
