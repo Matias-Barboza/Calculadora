@@ -90,7 +90,7 @@ public class Calculadora extends JFrame{
 
         this.setBounds((anchoPantalla/3),(altoPantalla/5),420,420);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setVisible(true);
+        //this.setVisible(true);
         this.setResizable(false);
         this.setLayout(null);
 
@@ -121,6 +121,7 @@ public class Calculadora extends JFrame{
 
         inicializarAccionesDeBotones();
         inicializarExpresion();
+        this.setVisible(true);
     }
 
     private void inicializarAccionesDeBotones(){
@@ -128,14 +129,45 @@ public class Calculadora extends JFrame{
         ansButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                /*
+                Para que el botón de resultado realice alguna acción se tiene que haber hecho alguna operación y que
+                esta haya finalizado sin errores
+                --------------------------------------------------------------------------------------------------------
+                 */
                 if(!resultado.equals("")){
-                    if(cantidadEnPantalla < 19){
+                    if(pantalla.getText().equals("SyntaxERROR")){
                         pantalla.setText("");
-                        pantalla.setText(pantalla.getText() + resultado);
-                        expresion[indiceActual] += resultado;
+                    }
+
+                    /*
+                    Cuando se presione el botón de "ans", debe haber capacidad en la pantalla, de haberlo se guarda lo
+                    que hay en el atributo resultado y a la expresion en el indice actual se le setea ese String como
+                    valor
+                    ----------------------------------------------------------------------------------------------------
+                     */
+                    if((cantidadEnPantalla + ansButton.getText().length()) < 19){
+                        if(indiceActual % 2 == 0){
+                            /*
+                            Lo acción para el botón "ans" es reemplazar lo que esté escrito en el Jlabel pantalla y en
+                            el arreglo que va guardando las partes de la expresión para hacer el calculo correspondiente
+                            --------------------------------------------------------------------------------------------
+                            Si el indice actual es 0, se setea el resultado en la pantalla, pero para el caso de no ser
+                            0 es que está la variable aBorrar, ya que me permite manipular lo que hay en el Jlabel, de
+                            forma que lo que vea el usuario sea el resultado que se guardó anteriormente en la operación
+                            actual
+                             */
+                            int aBorrar = expresion[indiceActual].length();
+                            expresion[indiceActual] = resultado;
+                            if(indiceActual == 0){
+                                pantalla.setText(resultado);
+                            }else{
+                                String operacion = pantalla.getText();
+                                operacion = operacion.substring(0,operacion.length() - aBorrar);
+                                pantalla.setText(operacion + resultado);
+                            }
+                        }
                         cantidadEnPantalla = pantalla.getText().length();
-                        System.out.println(cantidadEnPantalla);
+                        System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
                     }
                 }
             }
@@ -144,36 +176,65 @@ public class Calculadora extends JFrame{
         borrarUnoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!pantalla.getText().isEmpty()) {
-                    /*
-                    Para la operacion de borrar un caracter, primero obtengo el String presente en el label pantalla y
-                    el caracter que va a ser eliminado, seteo el texto nuevamente en el label con un caracter menos con
-                    el metodo substring()
-                    ----------------------------------------------------------------------------------------------------
-                     */
-                    String operacion = pantalla.getText();
-                    char borrado = operacion.charAt(operacion.length() - 1);
-
-                    operacion = operacion.substring(0, operacion.length() - 1);
-                    pantalla.setText(operacion);
-
-                    if(borradoEsOperacion(borrado)){
-                        expresion[indiceActual] = "";
-                        indiceActual -= 2;
-                    }else{
-                        expresion[indiceActual] = expresion[indiceActual].substring(0,expresion[indiceActual].length() - 1);
-                    }
-                    cantidadEnPantalla--;
-                }else{
+                if(pantalla.getText().equals("SyntaxERROR")){
                     pantalla.setText("");
                 }
-                System.out.println(cantidadEnPantalla);
+
+                if(!pantalla.getText().isEmpty()) {
+                    String operacion = pantalla.getText();
+                    /*
+                    Para la operacion de borrar un caracter, primero obtengo el String presente en el Jlabel pantalla y,
+                    seteo el texto nuevamente en el label con un caracter menos con el metodo substring()
+                    ----------------------------------------------------------------------------------------------------
+                    Para la eliminación en la expresión, hay dos condiciones: que el indíce actual sea par, o impar;
+                    Que la expresión en ese indice esté vacío = "", o no
+                     */
+                    if(indiceActual % 2 == 0){
+                        /*
+                        Si el indice es par, y la expresion en ese indice, no está vacío se sustrae un caracter de ese
+                        String
+                        ------------------------------------------------------------------------------------------------
+                        Si está vacio, y el indice a su vez es mayor a 0, se resta el indice, se setea a la expresión
+                        en "", ya que es un operador, y se resta otra vez el indice
+                         */
+                        if(!expresion[indiceActual].equals("")){
+                            expresion[indiceActual] = expresion[indiceActual].substring(0, expresion[indiceActual].length() - 1);
+                        }else{
+                            if(indiceActual > 0) {
+                                indiceActual--;
+                                expresion[indiceActual] = "";
+                                indiceActual--;
+                            }
+                        }
+                    }else{
+                        /*
+                        Si el indice no es par, se setea la expresion en "", y se resta el indice para poder seguir
+                        modificando la operación
+                        ------------------------------------------------------------------------------------------------
+                         */
+                        expresion[indiceActual] = "";
+                        indiceActual--;
+                    }
+                    operacion = operacion.substring(0,operacion.length() - 1);
+                    pantalla.setText(operacion);
+                    cantidadEnPantalla--;
+                    System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
+                }
             }
         });
 
         borrarTodoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                /*
+                Este botón setea la pantalla a vacío, el indice actual y la cantidad en pantalla a 0 y se reinicia la
+                expresión, es decir, todos sus lugares en "", para ingresar otra operación
+                --------------------------------------------------------------------------------------------------------
+                 */
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
+
                 pantalla.setText("");
                 inicializarExpresion();
                 indiceActual = 0;
@@ -184,6 +245,9 @@ public class Calculadora extends JFrame{
         sieteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
                 if(cantidadEnPantalla < 19) {
                     pantalla.setText(pantalla.getText() + "7");
@@ -193,13 +257,16 @@ public class Calculadora extends JFrame{
                     JOptionPane.showMessageDialog(null,"La calculadora admite hasta 19 caracteres" +
                             " en pantalla.","Aviso",JOptionPane.INFORMATION_MESSAGE);
                 }
-                System.out.println(cantidadEnPantalla);
+                System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
             }
         });
 
         ochoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
                 if(cantidadEnPantalla < 19) {
                     pantalla.setText(pantalla.getText() + "8");
@@ -209,13 +276,16 @@ public class Calculadora extends JFrame{
                     JOptionPane.showMessageDialog(null,"La calculadora admite hasta 19 caracteres" +
                             " en pantalla.","Aviso",JOptionPane.INFORMATION_MESSAGE);
                 }
-                System.out.println(cantidadEnPantalla);
+                System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
             }
         });
 
         nueveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
                 if(cantidadEnPantalla < 19) {
                     pantalla.setText(pantalla.getText() + "9");
@@ -225,21 +295,35 @@ public class Calculadora extends JFrame{
                     JOptionPane.showMessageDialog(null,"La calculadora admite hasta 19 caracteres" +
                             " en pantalla.","Aviso",JOptionPane.INFORMATION_MESSAGE);
                 }
-                System.out.println(cantidadEnPantalla);
+                System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
             }
         });
 
         divisionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                /*
+                El obelo no se puede ingresar como primer caracter ni como ultimo, tampoco delante de ningún otro operador
+                --------------------------------------------------------------------------------------------------------
+                 */
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
-                if(cantidadEnPantalla != 0) {
-                    pantalla.setText(pantalla.getText() + "÷");
-                    indiceActual++;
-                    expresion[indiceActual] = "÷";
-                    indiceActual++;
-                    cantidadEnPantalla++;
-                    System.out.println(cantidadEnPantalla);
+                if(cantidadEnPantalla < 18) {
+
+                    if (cantidadEnPantalla != 0) {
+                        String anterior = pantalla.getText().substring(pantalla.getText().length()-1);
+
+                        if(!anterior.equals("÷") && !anterior.equals("x") && !anterior.equals("+") && !anterior.equals("-")) {
+                            pantalla.setText(pantalla.getText() + "÷");
+                            indiceActual++;
+                            expresion[indiceActual] = "÷";
+                            indiceActual++;
+                            cantidadEnPantalla++;
+                            System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
+                        }
+                    }
                 }
             }
         });
@@ -247,6 +331,9 @@ public class Calculadora extends JFrame{
         cuatroButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
                 if(cantidadEnPantalla < 19) {
                     pantalla.setText(pantalla.getText() + "4");
@@ -256,13 +343,16 @@ public class Calculadora extends JFrame{
                     JOptionPane.showMessageDialog(null,"La calculadora admite hasta 19 caracteres" +
                             " en pantalla.","Aviso",JOptionPane.INFORMATION_MESSAGE);
                 }
-                System.out.println(cantidadEnPantalla);
+                System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
             }
         });
 
         cincoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
                 if(cantidadEnPantalla < 19) {
                     pantalla.setText(pantalla.getText() + "5");
@@ -272,13 +362,16 @@ public class Calculadora extends JFrame{
                     JOptionPane.showMessageDialog(null,"La calculadora admite hasta 19 caracteres" +
                             " en pantalla.","Aviso",JOptionPane.INFORMATION_MESSAGE);
                 }
-                System.out.println(cantidadEnPantalla);
+                System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
             }
         });
 
         seisButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
                 if(cantidadEnPantalla < 19) {
                     pantalla.setText(pantalla.getText() + "6");
@@ -288,21 +381,35 @@ public class Calculadora extends JFrame{
                     JOptionPane.showMessageDialog(null,"La calculadora admite hasta 19 caracteres" +
                             " en pantalla.","Aviso",JOptionPane.INFORMATION_MESSAGE);
                 }
-                System.out.println(cantidadEnPantalla);
+                System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
             }
         });
 
         multiplicacionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                /*
+                La x tiene el mismo funcionamiento que el obelo
+                --------------------------------------------------------------------------------------------------------
+                 */
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
-                if(cantidadEnPantalla != 0) {
-                    pantalla.setText(pantalla.getText() + "x");
-                    indiceActual++;
-                    expresion[indiceActual] = "x";
-                    indiceActual++;
-                    cantidadEnPantalla++;
-                    System.out.println(cantidadEnPantalla);
+                if(cantidadEnPantalla < 18) {
+
+                    if (cantidadEnPantalla != 0) {
+                        String anterior = pantalla.getText().substring(pantalla.getText().length() - 1 );
+
+                        if(!anterior.equals("÷") && !anterior.equals("x") && !anterior.equals("+") && !anterior.equals("-")) {
+                            pantalla.setText(pantalla.getText() + "x");
+                            indiceActual++;
+                            expresion[indiceActual] = "x";
+                            indiceActual++;
+                            cantidadEnPantalla++;
+                            System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
+                        }
+                    }
                 }
             }
         });
@@ -310,6 +417,9 @@ public class Calculadora extends JFrame{
         unoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
                 if(cantidadEnPantalla < 19) {
                     pantalla.setText(pantalla.getText() + "1");
@@ -319,13 +429,16 @@ public class Calculadora extends JFrame{
                     JOptionPane.showMessageDialog(null,"La calculadora admite hasta 19 caracteres" +
                             " en pantalla.","Aviso",JOptionPane.INFORMATION_MESSAGE);
                 }
-                System.out.println(cantidadEnPantalla);
+                System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
             }
         });
 
         dosButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
                 if(cantidadEnPantalla < 19) {
                     pantalla.setText(pantalla.getText() + "2");
@@ -335,13 +448,16 @@ public class Calculadora extends JFrame{
                     JOptionPane.showMessageDialog(null,"La calculadora admite hasta 19 caracteres" +
                             " en pantalla.","Aviso",JOptionPane.INFORMATION_MESSAGE);
                 }
-                System.out.println(cantidadEnPantalla);
+                System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
             }
         });
 
         tresButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
                 if(cantidadEnPantalla < 19) {
                     pantalla.setText(pantalla.getText() + "3");
@@ -351,30 +467,83 @@ public class Calculadora extends JFrame{
                     JOptionPane.showMessageDialog(null,"La calculadora admite hasta 19 caracteres" +
                             " en pantalla.","Aviso",JOptionPane.INFORMATION_MESSAGE);
                 }
-                System.out.println(cantidadEnPantalla);
+                System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
             }
         });
 
         restaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                if(cantidadEnPantalla != 0){
-                    indiceActual++;
-                    expresion[indiceActual] = "-";
-                    indiceActual++;
-                }else{
-                    expresion[indiceActual] += "-";
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
                 }
-                pantalla.setText(pantalla.getText() + "-");
-                cantidadEnPantalla++;
-                System.out.println(cantidadEnPantalla);
+
+                if(cantidadEnPantalla < 18) {
+
+                    if (cantidadEnPantalla != 0) {
+                        String anterior;
+
+                        if(cantidadEnPantalla > 1) {
+                            anterior = pantalla.getText().substring(pantalla.getText().length() - 1);
+                            String anteriorDelAnterior = pantalla.getText().substring(pantalla.getText().length() - 2, pantalla.getText().length() - 1);
+
+                            /*
+                            Si el anterior del anterior no es un Operador Aritmetico, es decir, es un numero
+                            --------------------------------------------------------------------------------------------
+                             */
+                            if (!anteriorDelAnterior.equals("÷") && !anteriorDelAnterior.equals("x") && !anteriorDelAnterior.equals("+") && !anteriorDelAnterior.equals("-")) {
+                                /*
+                                Si el anterior del anterior es un número y el anterior es un operador aritmetico, este,
+                                ya incrementó el indice actual, y por ende estamos formando otro numero en la expresión
+                                ----------------------------------------------------------------------------------------
+                                Si el anterior del anterior es un número y el anterior también, se incrementa el indice
+                                actual,y se lo toma como un operando que "no es parte de un número"
+                                ----------------------------------------------------------------------------------------
+                                 */
+                                if(anterior.equals("+") || anterior.equals("-") || anterior.equals("÷") || anterior.equals("x")) {
+                                    expresion[indiceActual] += "-";
+                                }else {
+                                    indiceActual++;
+                                    expresion[indiceActual] = "-";
+                                    indiceActual++;
+                                }
+                                pantalla.setText(pantalla.getText() + "-");
+                                cantidadEnPantalla++;
+                            }else{
+                                if(!anterior.equals("+") && !anterior.equals("-") && !anterior.equals("÷") && !anterior.equals("x") && !anterior.equals(".")) {
+                                    indiceActual++;
+                                    expresion[indiceActual] = "-";
+                                    indiceActual++;
+                                    pantalla.setText(pantalla.getText() + "-");
+                                    cantidadEnPantalla++;
+                                }
+                            }
+                        }else if(cantidadEnPantalla == 1){
+                            anterior = pantalla.getText().substring(pantalla.getText().length() - 1);
+                            if(anterior.equals(".")){
+                                indiceActual++;
+                                expresion[indiceActual] = "-";
+                                indiceActual++;
+                                pantalla.setText(pantalla.getText() + "-");
+                                cantidadEnPantalla++;
+                            }
+                        }
+                    } else {
+                        expresion[indiceActual] += "-";
+                        pantalla.setText(pantalla.getText() + "-");
+                        cantidadEnPantalla++;
+                    }
+                    System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
+                }
             }
         });
 
         ceroButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
                 if(cantidadEnPantalla < 19) {
                     pantalla.setText(pantalla.getText() + "0");
@@ -384,13 +553,16 @@ public class Calculadora extends JFrame{
                     JOptionPane.showMessageDialog(null,"La calculadora admite hasta 19 caracteres" +
                             " en pantalla.","Aviso",JOptionPane.INFORMATION_MESSAGE);
                 }
-                System.out.println(cantidadEnPantalla);
+                System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
             }
         });
 
         puntoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
+                }
 
                 if(cantidadEnPantalla < 19) {
                     pantalla.setText(pantalla.getText() + ".");
@@ -400,39 +572,70 @@ public class Calculadora extends JFrame{
                     JOptionPane.showMessageDialog(null,"La calculadora admite hasta 19 caracteres" +
                             " en pantalla.","Aviso",JOptionPane.INFORMATION_MESSAGE);
                 }
-                System.out.println(cantidadEnPantalla);
+                System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
             }
         });
 
         igualButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pantalla.setText("");
-                indiceActual++;
-                imprimirExpresion();
+                /*
+                Para cuando se presiona el boton de igual, se comprueba mediante el método existeAlMenosUnaCuenta() que
+                no se generen errores (NumberFormatException por el formateo incorrecto de alguna parte de la expresion)
+                y que haya al menos dos operandos
+                --------------------------------------------------------------------------------------------------------
+                 */
+                if(existeAlMenosUnaCuenta()) {
+                    pantalla.setText("");
+                    indiceActual++;
+                    imprimirExpresion();
 
-                realizarCalculo();
-                pantalla.setText(resultado);
+                    realizarCalculo();
+                    pantalla.setText(resultado);
 
-                inicializarExpresion();
-                indiceActual = 0;
+                    inicializarExpresion();
+                    indiceActual = 0;
+                    expresion[indiceActual] = resultado;
+                    cantidadEnPantalla = resultado.length();
+                }else{
+                    pantalla.setText("");
+                    pantalla.setText("SyntaxERROR");
+                    inicializarExpresion();
+                    indiceActual = 0;
+                    cantidadEnPantalla = 0;
+                }
             }
         });
 
         sumaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                if(cantidadEnPantalla != 0) {
-                    indiceActual++;
-                    expresion[indiceActual] = "+";
-                    indiceActual++;
-                }else{
-                    expresion[indiceActual] += "+";
+                /*
+                Se controla que no se ponga en primer lugar, ni despues de cualquier operando, ya que es redundante, no
+                así para el caso del signo "-"
+                --------------------------------------------------------------------------------------------------------
+                 */
+                if(pantalla.getText().equals("SyntaxERROR")){
+                    pantalla.setText("");
                 }
-                pantalla.setText(pantalla.getText() + "+");
-                cantidadEnPantalla++;
-                System.out.println(cantidadEnPantalla);
+
+                if(cantidadEnPantalla < 18) {
+
+                    if (cantidadEnPantalla != 0) {
+                        String anterior = pantalla.getText().substring(pantalla.getText().length()-1);
+
+                        if(anterior.equals("+") || anterior.equals("-")) {
+                            expresion[indiceActual] = "+";
+                        }else if(!anterior.equals("÷") && !anterior.equals("x")){
+                            indiceActual++;
+                            expresion[indiceActual] = "+";
+                            indiceActual++;
+                            pantalla.setText(pantalla.getText() + "+");
+                            cantidadEnPantalla++;
+                        }
+                        System.out.println("La cantidad que hay en pantalla es: " + cantidadEnPantalla);
+                    }
+                }
             }
         });
 
@@ -455,15 +658,14 @@ public class Calculadora extends JFrame{
         System.out.println();
     }
 
-    private boolean borradoEsOperacion(char borrado){
-        return Character.compare(borrado,'÷') == 0 || Character.compare(borrado,'x') == 0
-                || Character.compare(borrado,'+') == 0 || Character.compare(borrado,'-') == 0;
-    }
-
     private void realizarCalculo(){
 
         int divisiones = 0, multiplicaciones = 0, sumas = 0, restas = 0;
 
+        /*
+        Determino cuantas operaciones hay de cada una
+        ----------------------------------------------------------------------------------------------------------------
+         */
         for(int i = 0; i < indiceActual; i++){
 
             if(expresion[i].equals("÷")){
@@ -487,15 +689,12 @@ public class Calculadora extends JFrame{
                     resul = Double.parseDouble(expresion[i-1]) / Double.parseDouble(expresion[i+1]);
                     expresion[i-1] = String.valueOf(resul);
                     reIndexarExpresion(i);
+                    imprimirExpresion();
                     divisiones--;
                 }else{
                     i++;
                 }
             }
-
-            imprimirExpresion();
-            System.out.println(indiceActual);
-            System.out.println(i);
         }
 
         if(multiplicaciones != 0){
@@ -508,15 +707,12 @@ public class Calculadora extends JFrame{
                     resul = Double.parseDouble(expresion[i-1]) * Double.parseDouble(expresion[i+1]);
                     expresion[i-1] = String.valueOf(resul);
                     reIndexarExpresion(i);
+                    imprimirExpresion();
                     multiplicaciones--;
                 }else{
                     i++;
                 }
             }
-
-            imprimirExpresion();
-            System.out.println(indiceActual);
-            System.out.println(i);
         }
 
         if(restas != 0){
@@ -529,15 +725,12 @@ public class Calculadora extends JFrame{
                     resul = Double.parseDouble(expresion[i-1]) - Double.parseDouble(expresion[i+1]);
                     expresion[i-1] = String.valueOf(resul);
                     reIndexarExpresion(i);
+                    imprimirExpresion();
                     restas--;
                 }else{
                     i++;
                 }
             }
-
-            imprimirExpresion();
-            System.out.println(indiceActual);
-            System.out.println(i);
         }
 
         if(sumas != 0){
@@ -550,20 +743,22 @@ public class Calculadora extends JFrame{
                     resul = Double.parseDouble(expresion[i-1]) + Double.parseDouble(expresion[i+1]);
                     expresion[i-1] = String.valueOf(resul);
                     reIndexarExpresion(i);
+                    imprimirExpresion();
                     sumas--;
                 }else{
                     i++;
                 }
             }
-
-            imprimirExpresion();
-            System.out.println(indiceActual);
-            System.out.println(i);
         }
 
         if(Double.parseDouble(expresion[0]) % 1 == 0.0){
-            int result = (int) Double.parseDouble(expresion[0]);
-            resultado = String.valueOf(result);
+            if(Double.parseDouble(expresion[0]) < 1000000000) {
+                int resultInt = (int) Double.parseDouble(expresion[0]);
+                resultado = String.valueOf(resultInt);
+            }else{
+                long resultLong = Long.parseLong(expresion[0]);
+                resultado = String.valueOf(resultLong);
+            }
         }else {
             resultado = expresion[0];
         }
@@ -576,5 +771,25 @@ public class Calculadora extends JFrame{
         }
 
         indiceActual -= 2;
+    }
+
+    private boolean existeAlMenosUnaCuenta(){
+        int operandos = 0, errores = 0;
+
+        for (int i = 0; i < indiceActual + 1; i++){
+            if(!expresion[i].equals("")){
+                if(i % 2 == 0){
+                    try{
+                        String strNum = expresion[i];
+                        Double.parseDouble(strNum);
+                        operandos++;
+                    }catch (NumberFormatException e){
+                        System.out.println("El contenido del índice: " + i + " , no es un número");
+                        errores++;
+                    }
+                }
+            }
+        }
+        return operandos > 1 && errores == 0;
     }
 }
