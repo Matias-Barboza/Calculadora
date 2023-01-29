@@ -520,7 +520,7 @@ public class Calculadora extends JFrame{
                             }
                         }else if(cantidadEnPantalla == 1){
                             anterior = pantalla.getText().substring(pantalla.getText().length() - 1);
-                            if(anterior.equals(".")){
+                            if(!anterior.equals("+") && !anterior.equals("-") && !anterior.equals("÷") && !anterior.equals("x")){
                                 indiceActual++;
                                 expresion[indiceActual] = "-";
                                 indiceActual++;
@@ -624,9 +624,7 @@ public class Calculadora extends JFrame{
                     if (cantidadEnPantalla != 0) {
                         String anterior = pantalla.getText().substring(pantalla.getText().length()-1);
 
-                        if(anterior.equals("+") || anterior.equals("-")) {
-                            expresion[indiceActual] = "+";
-                        }else if(!anterior.equals("÷") && !anterior.equals("x")){
+                        if(!anterior.equals("÷") && !anterior.equals("x") && !anterior.equals("+") && !anterior.equals("-")){
                             indiceActual++;
                             expresion[indiceActual] = "+";
                             indiceActual++;
