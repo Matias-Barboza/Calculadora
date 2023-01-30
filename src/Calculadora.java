@@ -38,6 +38,7 @@ public class Calculadora extends JFrame{
     --------------------------------------------------------------------------------------------------------------------
      */
     private JLabel pantalla = new JLabel();
+    private JLabel nombre = new JLabel("B-MAT LAB");
 
     private String[] expresion = new String[20];
     private int indiceActual = 0;
@@ -61,8 +62,8 @@ public class Calculadora extends JFrame{
         Seteo posición, tamaño de la pantalla y de las filas de botones correspondientes a numeros y operaciones
         ----------------------------------------------------------------------------------------------------------------
          */
-        pantalla.setBounds(10,10,390,70);
-        pantalla.setFont(new Font("Calibri",Font.PLAIN,40));
+        pantalla.setBounds(10,30,390,50);
+        nombre.setBounds(190,5,70,20);
 
         ansButton.setBounds(120,90,100,40);
         borrarUnoButton.setBounds(230,90,100,40);
@@ -90,9 +91,16 @@ public class Calculadora extends JFrame{
 
         this.setBounds((anchoPantalla/3),(altoPantalla/5),420,420);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        //this.setVisible(true);
         this.setResizable(false);
         this.setLayout(null);
+
+        pantalla.setForeground(new Color(0x000000));
+        pantalla.setBackground(new Color(0x808080));
+        pantalla.setOpaque(true);
+        pantalla.setFont(new Font("Calibri",Font.PLAIN,40));
+        nombre.setForeground(new Color(0xffff99));
+        nombre.setFont(new Font("Haettenschweiler",Font.PLAIN,20));
+        this.getContentPane().setBackground(new Color(0x39424a));
 
         /*
         Añado los componentes al frame
@@ -118,6 +126,7 @@ public class Calculadora extends JFrame{
         this.add(igualButton);
         this.add(puntoButton);
         this.add(pantalla);
+        this.add(nombre);
 
         inicializarAccionesDeBotones();
         inicializarExpresion();
@@ -754,7 +763,8 @@ public class Calculadora extends JFrame{
                 int resultInt = (int) Double.parseDouble(expresion[0]);
                 resultado = String.valueOf(resultInt);
             }else{
-                long resultLong = Long.parseLong(expresion[0]);
+                double d = Double.parseDouble(expresion[0]);
+                long resultLong = (long) d;
                 resultado = String.valueOf(resultLong);
             }
         }else {
