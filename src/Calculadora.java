@@ -4,41 +4,35 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Calculadora extends JFrame{
-
-    private Toolkit toolkit;
-    private Dimension dimensionPantalla;
-    private int anchoPantalla;
-    private int altoPantalla;
-
     /*
     Botones que va a tener la calculadora para las respectivas operaciones
     --------------------------------------------------------------------------------------------------------------------
      */
-    private JButton ceroButton = new JButton("0");
-    private JButton unoButton = new JButton("1");
-    private JButton dosButton = new JButton("2");
-    private JButton tresButton = new JButton("3");
-    private JButton cuatroButton = new JButton("4");
-    private JButton cincoButton = new JButton("5");
-    private JButton seisButton = new JButton("6");
-    private JButton sieteButton = new JButton("7");
-    private JButton ochoButton = new JButton("8");
-    private JButton nueveButton = new JButton("9");
-    private JButton ansButton = new JButton("Ans");
-    private JButton borrarUnoButton = new JButton("CE");
-    private JButton borrarTodoButton = new JButton("C");
-    private JButton divisionButton = new JButton("÷");
-    private JButton multiplicacionButton = new JButton("x");
-    private JButton restaButton = new JButton("-");
-    private JButton sumaButton = new JButton("+");
-    private JButton igualButton = new JButton("=");
-    private JButton puntoButton = new JButton(".");
+    private final JButton ceroButton = new JButton("0");
+    private final JButton unoButton = new JButton("1");
+    private final JButton dosButton = new JButton("2");
+    private final JButton tresButton = new JButton("3");
+    private final JButton cuatroButton = new JButton("4");
+    private final JButton cincoButton = new JButton("5");
+    private final JButton seisButton = new JButton("6");
+    private final JButton sieteButton = new JButton("7");
+    private final JButton ochoButton = new JButton("8");
+    private final JButton nueveButton = new JButton("9");
+    private final JButton ansButton = new JButton("Ans");
+    private final JButton borrarUnoButton = new JButton("CE");
+    private final JButton borrarTodoButton = new JButton("C");
+    private final JButton divisionButton = new JButton("÷");
+    private final JButton multiplicacionButton = new JButton("x");
+    private final JButton restaButton = new JButton("-");
+    private final JButton sumaButton = new JButton("+");
+    private final JButton igualButton = new JButton("=");
+    private final JButton puntoButton = new JButton(".");
     /*
     Label donde se reproduce el tecleo de la operacion y posteriormente su resultado
     --------------------------------------------------------------------------------------------------------------------
      */
-    private JLabel pantalla = new JLabel();
-    private JLabel nombre = new JLabel("B-MAT LAB");
+    private final JLabel pantalla = new JLabel();
+    private final JLabel nombre = new JLabel("B-MAT LAB");
 
     private String[] expresion = new String[20];
     private int indiceActual = 0;
@@ -48,15 +42,17 @@ public class Calculadora extends JFrame{
     public Calculadora(){
         super("Calculadora simple con Java");
 
+        ImageIcon iconoCalcu = new ImageIcon("Ícono Calculadora.png");
+
         /*
         Esta seccion de codigo se encarga de tomar los datos de las distintas pantallas donde pueda ser ejecutado el
         programa, y lo adapta a las diferentes resoluciones
         ----------------------------------------------------------------------------------------------------------------
          */
-        toolkit = Toolkit.getDefaultToolkit();
-        dimensionPantalla = toolkit.getScreenSize();
-        anchoPantalla = (int) dimensionPantalla.getWidth(); // WIDTH --> ancho
-        altoPantalla = (int) dimensionPantalla.getHeight(); // HEIGHT --> alto
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension dimensionPantalla = toolkit.getScreenSize();
+        int anchoPantalla = (int) dimensionPantalla.getWidth(); // WIDTH --> ancho
+        int altoPantalla = (int) dimensionPantalla.getHeight(); // HEIGHT --> alto
 
         /*
         Seteo posición, tamaño de la pantalla y de las filas de botones correspondientes a numeros y operaciones
@@ -101,6 +97,7 @@ public class Calculadora extends JFrame{
         nombre.setForeground(new Color(0xffff99));
         nombre.setFont(new Font("Haettenschweiler",Font.PLAIN,20));
         this.getContentPane().setBackground(new Color(0x39424a));
+        this.setIconImage(iconoCalcu.getImage());
 
         /*
         Añado los componentes al frame
